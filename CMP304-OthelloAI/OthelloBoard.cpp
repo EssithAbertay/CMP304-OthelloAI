@@ -358,9 +358,6 @@ void OthelloBoard::FlipPieces(player_move startLocation)
 
 }
 
-
-
-
 bool OthelloBoard::CheckMove(player_move moveToCheck)
 {
 	BOARD_SQUARE_STATE playedColour = currentPlayer;
@@ -500,7 +497,7 @@ bool OthelloBoard::CheckMove(player_move moveToCheck)
 		if (board[moveToCheck.x + 1][moveToCheck.y + 1] == oppositeColour)
 		{
 			//use the smaller of the start positions to decide how many times to loop, since that decides how far from and edge you are, if they are the same it doesnt matter
-			int loopMax = 2 + std::min(7 - moveToCheck.x, 7 - moveToCheck.y);
+			int loopMax = 1 + std::min(7 - moveToCheck.x, 7 - moveToCheck.y);
 
 			for (int i = 2; i < loopMax; i++)
 			{
@@ -543,7 +540,7 @@ std::vector<std::pair<int, int>> OthelloBoard::GetPossibleMoves()
 	return validMoves;
 }
 
-void OthelloBoard::DisplayValid(std::vector<std::pair<int, int>> moves)
+void OthelloBoard::UpdateValidMovesToBoard(std::vector<std::pair<int, int>> moves)
 {
 	for (int i = 0; i < moves.size(); i++)
 	{

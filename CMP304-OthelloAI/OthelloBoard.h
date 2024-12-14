@@ -40,7 +40,7 @@ public:
 	bool CheckMove(player_move moveToCheck);
 	std::vector<std::pair<int, int>> GetPossibleMoves();  //add all the available moves into an array,mainly used by the ai later
 
-	void DisplayValid(std::vector<std::pair<int, int>> moves);
+	void UpdateValidMovesToBoard(std::vector<std::pair<int, int>> moves);
 
 	BOARD_SQUARE_STATE CheckWin(); // check if a player has won, return the winning player
 

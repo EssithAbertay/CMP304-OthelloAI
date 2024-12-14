@@ -29,7 +29,7 @@ void main()
 	std::cout<< "\033[44m" << "Blue Starts!" << std::endl;
 	std::cout << "\033[0m";
 
-	gameBoard.DisplayValid(gameBoard.GetPossibleMoves());
+	gameBoard.UpdateValidMovesToBoard(gameBoard.GetPossibleMoves());
 		
 	gameBoard.Display();
 
@@ -48,10 +48,13 @@ void main()
 
 		gameBoard.PlayTurn(move);
 
-		gameBoard.DisplayValid(gameBoard.GetPossibleMoves());
-		gameBoard.Display();
 
-		gameBoard.ChangeTurn();
+
+		gameBoard.ChangeTurn();	
+		
+		gameBoard.UpdateValidMovesToBoard(gameBoard.GetPossibleMoves());
+
+		gameBoard.Display();
 
 	}
 	return;
