@@ -5,7 +5,7 @@
 #define BOARD_DIMENSION 7 //the board is actually 8*8 but we use 7 because 0 is used as the starting index
 
 
-enum BOARD_SQUARE_STATE { NONE, BLUE, RED, DRAW }; //draw is only used so there is a return type for a draw
+enum BOARD_SQUARE_STATE { NONE, BLUE, RED, DRAW, VALID }; //draw is only used so there is a return type for a draw
 
 struct player_move
 	{
@@ -36,7 +36,11 @@ public:
 	void ChangeTurn(); //change the current player
 	void FlipPieces(player_move startLocation); // after a move is made flip the ones inbetween own pieces
 
-	//std::vector<std::pair<int, int>> GetPossibleMoves();  //add all the available moves into an array,mainly used by the ai later
+
+	bool CheckMove(player_move moveToCheck);
+	std::vector<std::pair<int, int>> GetPossibleMoves();  //add all the available moves into an array,mainly used by the ai later
+
+	void DisplayValid(std::vector<std::pair<int, int>> moves);
 
 	BOARD_SQUARE_STATE CheckWin(); // check if a player has won, return the winning player
 

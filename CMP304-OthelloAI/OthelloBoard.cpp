@@ -53,6 +53,9 @@ void OthelloBoard::Display()
 			case (RED):
 				std::cout << ANSI_RED << "R";
 				break;
+			case (VALID):
+				std::cout << ANSI_GREEN << " ";
+				break;
 			default:
 				break;
 			}
@@ -294,12 +297,12 @@ void OthelloBoard::FlipPieces(player_move startLocation)
 	flip = false;
 	//check down left
 
-	/*if (startLocation.x <= BOARD_DIMENSION - 2 && startLocation.y > 1)
+	if (startLocation.x <= BOARD_DIMENSION - 2 && startLocation.y > 1)
 	{
 		if (board[startLocation.x + 1][startLocation.y - 1] == oppositeColour)
 		{
 
-			int iter = 2 + std::min(startLocation.y, 7 - startLocation.x);
+			int iter = 1 + std::min(startLocation.y, 7 - startLocation.x);
 
 			for (int i = 2; i < iter; i++)
 			{
@@ -320,7 +323,7 @@ void OthelloBoard::FlipPieces(player_move startLocation)
 			}
 
 		}
-	}*/
+	}
 
 	flip = false;
 	//check down right
@@ -352,6 +355,201 @@ void OthelloBoard::FlipPieces(player_move startLocation)
 
 		}
 	}
+
+}
+
+
+
+
+bool OthelloBoard::CheckMove(player_move moveToCheck)
+{
+	BOARD_SQUARE_STATE playedColour = currentPlayer;
+	BOARD_SQUARE_STATE oppositeColour;
+	//set the opposite colour as the opposite aas to what was played
+	if (playedColour == BLUE)
+	{
+		oppositeColour = RED;
+	}
+	else
+	{
+		oppositeColour = BLUE;
+	}
+
+	//this code is super lazy, ive copypassted from the flip pieces function, ideally it would just use a  shared function with flip pieces but im too tired for the right now, so gonna have mega code duplication!
+
+	//check if can flip on left
+	if (moveToCheck.y >= 2) 
+	{
+		if (board[moveToCheck.x][moveToCheck.y - 1] == oppositeColour)
+		{
+			for (int i = 2; i <= moveToCheck.y; i++)
+			{
+				if (board[moveToCheck.x][moveToCheck.y - i] == playedColour)
+				{
+					return true;
+				}
+			}
+		}
+	}
+
+	//check if can flip on right
+	if (moveToCheck.y <= BOARD_DIMENSION - 2) 
+	{
+		if (board[moveToCheck.x][moveToCheck.y + 1] == oppositeColour)
+		{
+			for (int i = 2; i < BOARD_DIMENSION + 1; i++)
+			{
+				if (board[moveToCheck.x][moveToCheck.y + i] == playedColour)
+				{
+					return true;
+				}
+			}
+		}
+	}
+
+	//check if can flip up
+	if (moveToCheck.x >= 2) //it can only flip cells on the left if its beyond a point
+	{
+		if (board[moveToCheck.x - 1][moveToCheck.y] == oppositeColour)
+		{
+			for (int i = 2; i <= moveToCheck.x; i++)
+			{
+				if (board[moveToCheck.x - i][moveToCheck.y] == playedColour)
+				{
+					return true;
+				}
+			}
+		}
+	}
+
+	//check if can flip down
+	if (moveToCheck.x <= BOARD_DIMENSION - 2) //
+	{
+		if (board[moveToCheck.x + 1][moveToCheck.y] == oppositeColour)
+		{
+			for (int i = 2; i < BOARD_DIMENSION + 1; i++)
+			{
+				if (board[moveToCheck.x + i][moveToCheck.y] == playedColour)
+				{
+					return true;
+				}
+			}
+		}
+	}
+
+	
+	if (moveToCheck.x >= 2 && moveToCheck.y >= 2)
+	{
+		if (board[moveToCheck.x - 1][moveToCheck.y - 1] == oppositeColour)
+		{
+			//use the smaller of the start positions to decide how many times to loop, since that decides how far from and edge you are, if they are the same it doesnt matter
+			int loopMax = std::min(moveToCheck.x, moveToCheck.y);
+
+			for (int i = 2; i < 2 + loopMax; i++)
+			{
+				if (board[moveToCheck.x - i][moveToCheck.y - i] == playedColour)
+				{
+					return true;
+				}
+			}
+
+		}
+	}
+
+	//check up right
+	if (moveToCheck.y <= BOARD_DIMENSION - 2 && moveToCheck.x > 1)
+	{
+		if (board[moveToCheck.x - 1][moveToCheck.y + 1] == oppositeColour)
+		{
+
+			int iter = 2 + std::min(moveToCheck.x, 7 - moveToCheck.y);
+
+			for (int i = 2; i < iter; i++)
+			{
+				if (board[moveToCheck.x - i][moveToCheck.y + i] == playedColour)
+				{
+					return true;
+				}
+			}
+		}
+	}
+
+
+	//check down left
+	if (moveToCheck.x <= BOARD_DIMENSION - 2 && moveToCheck.y > 1)
+	{
+		if (board[moveToCheck.x + 1][moveToCheck.y - 1] == oppositeColour)
+		{
+
+			int iter = 1 + std::min(moveToCheck.y, 7 - moveToCheck.x);
+
+			for (int i = 2; i < iter; i++)
+			{
+				if (board[moveToCheck.x + i][moveToCheck.y - i] == playedColour)
+				{
+					return true;
+				}
+			}
+		}
+	}
+
+
+	//down right
+	if (moveToCheck.x < BOARD_DIMENSION - 1 && moveToCheck.y < BOARD_DIMENSION - 1)
+	{
+		if (board[moveToCheck.x + 1][moveToCheck.y + 1] == oppositeColour)
+		{
+			//use the smaller of the start positions to decide how many times to loop, since that decides how far from and edge you are, if they are the same it doesnt matter
+			int loopMax = 2 + std::min(7 - moveToCheck.x, 7 - moveToCheck.y);
+
+			for (int i = 2; i < loopMax; i++)
+			{
+				if (board[moveToCheck.x + i][moveToCheck.y + i] == playedColour)
+				{
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+std::vector<std::pair<int, int>> OthelloBoard::GetPossibleMoves()
+{
+	std::vector<std::pair<int, int>> validMoves;
+
+	player_move moveBeingChecked;
+	//loop for all squares on board
+	for (int i = 0; i < BOARD_DIMENSION + 1; i++)
+	{
+		for (int j = 0; j < BOARD_DIMENSION + 1; j++)
+		{
+			//logic check to see if a move is valid
+			if(board[i][j] == NONE) //1. can only be valid if not played on yet
+			{
+				//2. must be bordering opposite cell
+				//3. must be able to flip bordering cell
+				moveBeingChecked.x = i;
+				moveBeingChecked.y = j;
+				if (CheckMove(moveBeingChecked))
+				{
+					validMoves.push_back(std::make_pair(i, j)); //add valid move to list of moves
+				}
+			}
+			
+		}
+	}
+	return validMoves;
+}
+
+void OthelloBoard::DisplayValid(std::vector<std::pair<int, int>> moves)
+{
+	for (int i = 0; i < moves.size(); i++)
+	{
+		board[moves[i].first][moves[i].second] = VALID;
+	}
+
 
 }
 
