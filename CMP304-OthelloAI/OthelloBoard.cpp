@@ -34,7 +34,6 @@ void OthelloBoard::Setup()
 
 void OthelloBoard::Display()
 {
-
 	std::cout << ANSI_RESET << " 01234567" << std::endl;
 	for (int i = 0; i < BOARD_DIMENSION + 1; i++)
 	{
@@ -92,6 +91,8 @@ void OthelloBoard::ChangeTurn()
 	default:
 		break;
 	}
+
+	wipeValidMoves();
 }
 
 void OthelloBoard::FlipPieces(player_move startLocation)
@@ -546,8 +547,20 @@ void OthelloBoard::UpdateValidMovesToBoard(std::vector<std::pair<int, int>> move
 	{
 		board[moves[i].first][moves[i].second] = VALID;
 	}
+}
 
-
+void OthelloBoard::wipeValidMoves()
+{
+	for (int i = 0; i < BOARD_DIMENSION + 1; i++)
+	{
+		for (int j = 0; j < BOARD_DIMENSION + 1; j++)
+		{
+			if (board[i][j] == VALID)
+			{
+				board[i][j] = NONE;
+			}
+		}
+	}
 }
 
 BOARD_SQUARE_STATE OthelloBoard::CheckWin()

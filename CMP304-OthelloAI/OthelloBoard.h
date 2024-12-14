@@ -41,6 +41,7 @@ public:
 	std::vector<std::pair<int, int>> GetPossibleMoves();  //add all the available moves into an array,mainly used by the ai later
 
 	void UpdateValidMovesToBoard(std::vector<std::pair<int, int>> moves);
+	void wipeValidMoves();
 
 	BOARD_SQUARE_STATE CheckWin(); // check if a player has won, return the winning player
 

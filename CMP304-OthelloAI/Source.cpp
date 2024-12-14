@@ -52,6 +52,8 @@ void main()
 
 		gameBoard.ChangeTurn();	
 		
+
+
 		gameBoard.UpdateValidMovesToBoard(gameBoard.GetPossibleMoves());
 
 		gameBoard.Display();
