@@ -30,6 +30,8 @@ void OthelloBoard::Setup()
 	board[4][4] = RED;
 	board[3][4] = BLUE;
 	board[4][3] = BLUE;
+
+
 }
 
 void OthelloBoard::Display()
@@ -334,7 +336,7 @@ void OthelloBoard::FlipPieces(player_move startLocation)
 		if (board[startLocation.x + 1][startLocation.y + 1] == oppositeColour)
 		{
 			//use the smaller of the start positions to decide how many times to loop, since that decides how far from and edge you are, if they are the same it doesnt matter
-			int loopMax = 2 + std::min(7 - startLocation.x, 7 - startLocation.y);
+			int loopMax = 1 + std::min(7 - startLocation.x, 7 - startLocation.y);
 
 			for (int i = 2; i < loopMax; i++)
 			{

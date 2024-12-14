@@ -13,10 +13,33 @@ bool validateMove(OthelloBoard *board,player_move p_move)
 	return true;
 }
 
+void PlayerTurn(OthelloBoard* gameboard)
+{
+	player_move move;
+
+	do
+	{
+		std::cout << "Enter X:" << std::endl;
+		std::cin >> move.y;
+		std::cout << "Enter Y:" << std::endl;
+		std::cin >> move.x;
+	} while (!validateMove(gameboard, move));
+
+	gameboard->PlayTurn(move);
+
+	gameboard->ChangeTurn();
+
+	gameboard->UpdateValidMovesToBoard(gameboard->GetPossibleMoves());
+
+	gameboard->Display();
+}
+
+void AITurn()
+{}
+
 void main()
 {
 	OthelloBoard gameBoard;
-	player_move move;
 
 	int x = 9;
 	int y = 9;
@@ -33,31 +56,10 @@ void main()
 		
 	gameBoard.Display();
 
-
 	//idk why but x and y are flipped,can't bothered dealing with it so will just pretend they are not
 	while (gameBoard.CheckWin() == NONE)
 	{
-		do
-		{
-			std::cout << "Enter X move:" << std::endl;
-			std::cin >> move.y;
-			std::cout << "Enter Y move:" << std::endl;
-			std::cin >> move.x;
-		} while (!validateMove(&gameBoard, move));
-
-
-		gameBoard.PlayTurn(move);
-
-
-
-		gameBoard.ChangeTurn();	
-		
-
-
-		gameBoard.UpdateValidMovesToBoard(gameBoard.GetPossibleMoves());
-
-		gameBoard.Display();
-
+		PlayerTurn(&gameBoard);
 	}
 	return;
 }
