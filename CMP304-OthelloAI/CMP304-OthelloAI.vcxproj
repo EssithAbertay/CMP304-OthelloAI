@@ -127,11 +127,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AINode.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="OthelloBoard.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AINode.h" />
     <ClInclude Include="BoardAndAction.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="OthelloBoard.h" />

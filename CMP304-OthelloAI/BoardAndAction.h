@@ -1,14 +1,22 @@
 #pragma once
 
 // define enum's and structs used in the game
-enum BOARD_SQUARE_STATE { NONE, BLUE, RED, DRAW, VALID };
+enum BOARD_SQUARE_STATE { NONE, BLUE, RED};
 
 #define BOARD_DIMENSION 7 //the board is actually 8*8 but we use 7 because 0 is used as the starting index
 
 
 struct GameBoard
 {
-	BOARD_SQUARE_STATE board[8][8]{ { BOARD_SQUARE_STATE::NONE } };
+	BOARD_SQUARE_STATE board[8][8] =  { NONE, NONE, NONE, NONE,NONE, NONE, NONE, NONE,
+										NONE, NONE, NONE, NONE,NONE, NONE, NONE, NONE,
+										NONE, NONE, NONE, NONE,NONE, NONE, NONE, NONE,
+										NONE, NONE, NONE, BLUE,RED, NONE, NONE, NONE,
+										NONE, NONE, NONE, RED,BLUE, NONE, NONE, NONE,
+										NONE, NONE, NONE, NONE,NONE, NONE, NONE, NONE,
+										NONE, NONE, NONE, NONE,NONE, NONE, NONE, NONE,
+										NONE, NONE, NONE, NONE,NONE, NONE, NONE, NONE,
+	}; 
 };
 
 struct GameAction

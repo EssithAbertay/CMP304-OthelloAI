@@ -22,7 +22,7 @@ public:
 	void FlipPieces(); // after a move is made flip the ones inbetween own pieces
 
 
-	std::vector<std::pair<int, int>> getPossibleMoves(GameAction moveBeingChecked);
+	std::vector<std::pair<int, int>> getPossibleMoves(BOARD_SQUARE_STATE p_colour);
 	bool CheckMove(GameAction moveToCheck);
 
 	void printBoard();

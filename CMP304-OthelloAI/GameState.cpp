@@ -40,6 +40,10 @@ void GameState::FlipPieces()
 		{
 			for (int i = 2; i <= gameAction.y; i++)
 			{
+				if (gameBoard.board[gameAction.x][gameAction.y - i] == NONE)
+				{
+					break;
+				}
 				if (gameBoard.board[gameAction.x][gameAction.y - i] == playedColour)
 				{
 					flip = true;
@@ -70,6 +74,11 @@ void GameState::FlipPieces()
 		{
 			for (int i = 2; i < BOARD_DIMENSION + 1; i++)
 			{
+
+				if (gameBoard.board[gameAction.x][gameAction.y + i] == NONE)
+				{
+					break;
+				}
 				if (gameBoard.board[gameAction.x][gameAction.y + i] == playedColour)
 				{
 					flip = true;
@@ -100,6 +109,10 @@ void GameState::FlipPieces()
 		{
 			for (int i = 2; i <= gameAction.x; i++)
 			{
+				if (gameBoard.board[gameAction.x - i][gameAction.y] == NONE)
+				{
+					break;
+				}
 				if (gameBoard.board[gameAction.x - i][gameAction.y] == playedColour)
 				{
 					flip = true;
@@ -128,8 +141,12 @@ void GameState::FlipPieces()
 	{
 		if (gameBoard.board[gameAction.x + 1][gameAction.y] == oppositeColour)
 		{
-			for (int i = 2; i < BOARD_DIMENSION + 1; i++)
+			for (int i = 2; i < BOARD_DIMENSION - gameAction.x; i++)
 			{
+				if (gameBoard.board[gameAction.x + i][gameAction.y] == NONE)
+				{
+					break;
+				}
 				if (gameBoard.board[gameAction.x + i][gameAction.y] == playedColour)
 				{
 					flip = true;
@@ -162,6 +179,10 @@ void GameState::FlipPieces()
 
 			for (int i = 2; i < 2 + loopMax; i++)
 			{
+				if (gameBoard.board[gameAction.x - i][gameAction.y - i] == NONE)
+				{
+					break;
+				}
 				if (gameBoard.board[gameAction.x - i][gameAction.y - i] == playedColour)
 				{
 					flip = true;
@@ -194,6 +215,10 @@ void GameState::FlipPieces()
 
 			for (int i = 2; i < iter; i++)
 			{
+				if (gameBoard.board[gameAction.x - i][gameAction.y + i] == NONE)
+				{
+					break;
+				}
 				if (gameBoard.board[gameAction.x - i][gameAction.y + i] == playedColour)
 				{
 					flip = true;
@@ -225,6 +250,10 @@ void GameState::FlipPieces()
 
 			for (int i = 2; i < iter; i++)
 			{
+				if (gameBoard.board[gameAction.x + i][gameAction.y - i] == NONE)
+				{
+					break;
+				}
 				if (gameBoard.board[gameAction.x + i][gameAction.y - i] == playedColour)
 				{
 					flip = true;
@@ -262,6 +291,12 @@ void GameState::FlipPieces()
 					a = i;
 					break;
 				}
+				if (gameBoard.board[gameAction.x + i][gameAction.y + i] == playedColour)
+				{
+					flip = true;
+					a = i;
+					break;
+				}
 			}
 
 			if (flip)
@@ -278,10 +313,12 @@ void GameState::FlipPieces()
 }
 
 
-std::vector<std::pair<int, int>> GameState::getPossibleMoves(GameAction moveBeingChecked)
+std::vector<std::pair<int, int>> GameState::getPossibleMoves(BOARD_SQUARE_STATE p_colour)
 {
 	std::vector<std::pair<int, int>> validMoves;
 
+	GameAction moveBeingChecked;
+	moveBeingChecked.playerMove = p_colour;
 	//loop for all squares on board
 	for (int i = 0; i < BOARD_DIMENSION + 1; i++)
 	{
@@ -328,6 +365,11 @@ bool GameState::CheckMove(GameAction moveToCheck)
 		{
 			for (int i = 2; i <= moveToCheck.y; i++)
 			{
+				if (gameBoard.board[moveToCheck.x][moveToCheck.y - i] == NONE)
+				{
+					return false;
+				}
+
 				if (gameBoard.board[moveToCheck.x][moveToCheck.y - i] == playedColour)
 				{
 					return true;
@@ -343,6 +385,10 @@ bool GameState::CheckMove(GameAction moveToCheck)
 		{
 			for (int i = 2; i < BOARD_DIMENSION + 1; i++)
 			{
+				if (gameBoard.board[moveToCheck.x][moveToCheck.y + i] == NONE)
+				{
+					return false;
+				}
 				if (gameBoard.board[moveToCheck.x][moveToCheck.y + i] == playedColour)
 				{
 					return true;
@@ -358,6 +404,10 @@ bool GameState::CheckMove(GameAction moveToCheck)
 		{
 			for (int i = 2; i <= moveToCheck.x; i++)
 			{
+				if (gameBoard.board[moveToCheck.x - i][moveToCheck.y] == NONE)
+				{
+					return false;
+				}
 				if (gameBoard.board[moveToCheck.x - i][moveToCheck.y] == playedColour)
 				{
 					return true;
@@ -373,6 +423,10 @@ bool GameState::CheckMove(GameAction moveToCheck)
 		{
 			for (int i = 2; i < BOARD_DIMENSION + 1; i++)
 			{
+				if (gameBoard.board[moveToCheck.x + i][moveToCheck.y] == NONE)
+				{
+					return false;
+				}
 				if (gameBoard.board[moveToCheck.x + i][moveToCheck.y] == playedColour)
 				{
 					return true;
@@ -391,6 +445,10 @@ bool GameState::CheckMove(GameAction moveToCheck)
 
 			for (int i = 2; i < 2 + loopMax; i++)
 			{
+				if (gameBoard.board[moveToCheck.x - i][moveToCheck.y - i] == NONE)
+				{
+					return false;
+				}
 				if (gameBoard.board[moveToCheck.x - i][moveToCheck.y - i] == playedColour)
 				{
 					return true;
@@ -410,6 +468,10 @@ bool GameState::CheckMove(GameAction moveToCheck)
 
 			for (int i = 2; i < iter; i++)
 			{
+				if (gameBoard.board[moveToCheck.x - i][moveToCheck.y + i] == NONE)
+				{
+					return false;
+				}
 				if (gameBoard.board[moveToCheck.x - i][moveToCheck.y + i] == playedColour)
 				{
 					return true;
@@ -429,6 +491,10 @@ bool GameState::CheckMove(GameAction moveToCheck)
 
 			for (int i = 2; i < iter; i++)
 			{
+				if (gameBoard.board[moveToCheck.x + i][moveToCheck.y - i] == NONE)
+				{
+					return false;
+				}
 				if (gameBoard.board[moveToCheck.x + i][moveToCheck.y - i] == playedColour)
 				{
 					return true;
@@ -448,6 +514,10 @@ bool GameState::CheckMove(GameAction moveToCheck)
 
 			for (int i = 2; i < loopMax; i++)
 			{
+				if (gameBoard.board[moveToCheck.x + i][moveToCheck.y + i] == NONE)
+				{
+					return false;
+				}
 				if (gameBoard.board[moveToCheck.x + i][moveToCheck.y + i] == playedColour)
 				{
 					return true;
@@ -479,9 +549,9 @@ void GameState::printBoard()
 			case (RED):
 				std::cout << ANSI_RED << "R";
 				break;
-			case (VALID):
-				std::cout << ANSI_GREEN << " ";
-				break;
+			//case (VALID):
+			//	std::cout << ANSI_GREEN << " ";
+			//	break;
 			default:
 				break;
 			}
@@ -540,5 +610,5 @@ BOARD_SQUARE_STATE GameState::checkWin()
 	}
 
 	//if blue and red squares are tied return as such
-	return DRAW;
+	return NONE;
 }
