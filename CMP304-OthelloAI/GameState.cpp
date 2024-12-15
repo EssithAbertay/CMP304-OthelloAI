@@ -16,23 +16,19 @@ void GameState::setAndApplyAction(GameAction newAction)
 void GameState::FlipPieces()
 {
 	BOARD_SQUARE_STATE playedColour = gameAction.playerMove;
-	BOARD_SQUARE_STATE oppositeColour;
-	//set the opposite colour as the opposite aas to what was played
-	if (playedColour == BLUE)
-	{
-		oppositeColour = RED;
-	}
-	else
-	{
-		oppositeColour = BLUE;
-	}
+	BOARD_SQUARE_STATE oppositeColour = (playedColour == BLUE) ? RED : BLUE;	//set the opposite colour as the opposite aas to what was played
+
 
 	bool flip = false;
 	int a = 0;
+
+
 	//there are 8 different directions to check, up, down, left, right, up left, up right, down left, and down right
 	//y is horizontal and x is vertical idk why but we're gonna live with it
 
-	//check left - functioning
+	//in future a better implementation of the flips and checks could have been used, this implementation has led to many errors, potentially looping though an array of directions would have worked
+
+	//check left - works
 
 	if (gameAction.y >= 2) //it can only flip cells on the left if its beyond a point
 	{
@@ -63,16 +59,17 @@ void GameState::FlipPieces()
 		}
 	}
 
+	//reset flip
 	flip = false;
 
-	//check right - functioning
+	//check right - fixed
 
 	if (gameAction.y <= BOARD_DIMENSION - 2) //
 
 	{
 		if (gameBoard.board[gameAction.x][gameAction.y + 1] == oppositeColour)
 		{
-			for (int i = 2; i < BOARD_DIMENSION + 1; i++)
+			for (int i = 2; i <= BOARD_DIMENSION - gameAction.y; i++)
 			{
 
 				if (gameBoard.board[gameAction.x][gameAction.y + i] == NONE)
@@ -100,7 +97,7 @@ void GameState::FlipPieces()
 
 	flip = false;
 
-	//check up - functioning
+	//check up - fixed
 
 	if (gameAction.x >= 2) //it can only flip cells on the left if its beyond a point
 
@@ -134,7 +131,7 @@ void GameState::FlipPieces()
 
 	flip = false;
 
-	//check down - functioning
+	//check down - fixed
 
 	if (gameAction.x <= BOARD_DIMENSION - 2) //
 
@@ -168,16 +165,16 @@ void GameState::FlipPieces()
 
 	flip = false;
 
-	//check up left
+	//check up left - fixed
 
 	if (gameAction.x >= 2 && gameAction.y >= 2)
 	{
 		if (gameBoard.board[gameAction.x - 1][gameAction.y - 1] == oppositeColour)
 		{
 			//use the smaller of the start positions to decide how many times to loop, since that decides how far from and edge you are, if they are the same it doesnt matter
-			int loopMax = std::min(gameAction.x, gameAction.y);
+			int iteratorMax = std::min(gameAction.x, gameAction.y);
 
-			for (int i = 2; i < 2 + loopMax; i++)
+			for (int i = 2; i <= iteratorMax; i++)
 			{
 				if (gameBoard.board[gameAction.x - i][gameAction.y - i] == NONE)
 				{
@@ -206,14 +203,14 @@ void GameState::FlipPieces()
 
 	//check up right
 
-	if (gameAction.y <= BOARD_DIMENSION - 2 && gameAction.x > 1)
+	if (gameAction.x >= 2 && gameAction.y <= BOARD_DIMENSION - 2 )
 	{
 		if (gameBoard.board[gameAction.x - 1][gameAction.y + 1] == oppositeColour)
 		{
 
-			int iter = 1+std::min(gameAction.x, 7 - gameAction.y);
+			int iteratorMax = std::min(gameAction.x, BOARD_DIMENSION - gameAction.y);
 
-			for (int i = 2; i < iter; i++)
+			for (int i = 2; i <= iteratorMax; i++)
 			{
 				if (gameBoard.board[gameAction.x - i][gameAction.y + i] == NONE)
 				{
@@ -239,16 +236,17 @@ void GameState::FlipPieces()
 	}
 
 	flip = false;
+
 	//check down left
 
-	if (gameAction.x <= BOARD_DIMENSION - 2 && gameAction.y > 1)
+	if (gameAction.x <= BOARD_DIMENSION - 2 && gameAction.y >= 2)
 	{
 		if (gameBoard.board[gameAction.x + 1][gameAction.y - 1] == oppositeColour)
 		{
 
-			int iter = 1 + std::min(gameAction.y, 7 - gameAction.x);
+			int iteratorMax = std::min(BOARD_DIMENSION - gameAction.x, gameAction.y);
 
-			for (int i = 2; i < iter; i++)
+			for (int i = 2; i <= iteratorMax; i++)
 			{
 				if (gameBoard.board[gameAction.x + i][gameAction.y - i] == NONE)
 				{
@@ -274,20 +272,20 @@ void GameState::FlipPieces()
 	}
 
 	flip = false;
+
 	//check down right
 
-	if (gameAction.x < BOARD_DIMENSION - 1 && gameAction.y < BOARD_DIMENSION - 1)
+	if (gameAction.x <= BOARD_DIMENSION - 2 && gameAction.y <= BOARD_DIMENSION - 2)
 	{
 		if (gameBoard.board[gameAction.x + 1][gameAction.y + 1] == oppositeColour)
 		{
 			//use the smaller of the start positions to decide how many times to loop, since that decides how far from and edge you are, if they are the same it doesnt matter
-			int loopMax = 1 + std::min(7 - gameAction.x, 7 - gameAction.y);
+			int iteratorMax = std::min(BOARD_DIMENSION - gameAction.x, BOARD_DIMENSION - gameAction.y);
 
-			for (int i = 2; i < loopMax; i++)
+			for (int i = 2; i <= iteratorMax; i++)
 			{
 				if (gameBoard.board[gameAction.x + i][gameAction.y + i] == NONE)
 				{
-
 					break;
 				}
 				if (gameBoard.board[gameAction.x + i][gameAction.y + i] == playedColour)
@@ -310,7 +308,6 @@ void GameState::FlipPieces()
 	}
 
 }
-
 
 std::vector<std::pair<int, int>> GameState::getPossibleMoves(BOARD_SQUARE_STATE p_colour)
 {
@@ -344,16 +341,7 @@ std::vector<std::pair<int, int>> GameState::getPossibleMoves(BOARD_SQUARE_STATE 
 bool GameState::CheckMove(GameAction moveToCheck)
 {
 	BOARD_SQUARE_STATE playedColour = moveToCheck.playerMove;
-	BOARD_SQUARE_STATE oppositeColour;
-	//set the opposite colour as the opposite as to what was played
-	if (playedColour == BLUE)
-	{
-		oppositeColour = RED;
-	}
-	else
-	{
-		oppositeColour = BLUE;
-	}
+	BOARD_SQUARE_STATE oppositeColour = (playedColour == BLUE) ? RED : BLUE;
 
 	//this code is super lazy, ive copypassted from the flip pieces function, ideally it would just use a  shared function with flip pieces but im too tired for the right now, so gonna have mega code duplication!
 
@@ -382,7 +370,7 @@ bool GameState::CheckMove(GameAction moveToCheck)
 	{
 		if (gameBoard.board[moveToCheck.x][moveToCheck.y + 1] == oppositeColour)
 		{
-			for (int i = 2; i < BOARD_DIMENSION + 1; i++)
+			for (int i = 2; i <= BOARD_DIMENSION -moveToCheck.y; i++)
 			{
 				if (gameBoard.board[moveToCheck.x][moveToCheck.y + i] == NONE)
 				{
@@ -420,7 +408,7 @@ bool GameState::CheckMove(GameAction moveToCheck)
 	{
 		if (gameBoard.board[moveToCheck.x + 1][moveToCheck.y] == oppositeColour)
 		{
-			for (int i = 2; i < BOARD_DIMENSION + 1; i++)
+			for (int i = 2; i <= BOARD_DIMENSION - moveToCheck.x; i++)
 			{
 				if (gameBoard.board[moveToCheck.x + i][moveToCheck.y] == NONE)
 				{
@@ -434,15 +422,15 @@ bool GameState::CheckMove(GameAction moveToCheck)
 		}
 	}
 
-
+	//check up left
 	if (moveToCheck.x >= 2 && moveToCheck.y >= 2)
 	{
 		if (gameBoard.board[moveToCheck.x - 1][moveToCheck.y - 1] == oppositeColour)
 		{
 			//use the smaller of the start positions to decide how many times to loop, since that decides how far from and edge you are, if they are the same it doesnt matter
-			int loopMax = std::min(moveToCheck.x, moveToCheck.y);
+			int iteratorMax = std::min(moveToCheck.x, moveToCheck.y);
 
-			for (int i = 2; i < 2 + loopMax; i++)
+			for (int i = 2; i <= iteratorMax; i++)
 			{
 				if (gameBoard.board[moveToCheck.x - i][moveToCheck.y - i] == NONE)
 				{
@@ -458,14 +446,14 @@ bool GameState::CheckMove(GameAction moveToCheck)
 	}
 
 	//check up right
-	if (moveToCheck.y <= BOARD_DIMENSION - 2 && moveToCheck.x > 1)
+	if (moveToCheck.x >= 2 && moveToCheck.y <= BOARD_DIMENSION - 2)
 	{
 		if (gameBoard.board[moveToCheck.x - 1][moveToCheck.y + 1] == oppositeColour)
 		{
 
-			int iter = 2 + std::min(moveToCheck.x, 7 - moveToCheck.y);
+			int iteratorMax = std::min(moveToCheck.x, BOARD_DIMENSION - moveToCheck.y);
 
-			for (int i = 2; i < iter; i++)
+			for (int i = 2; i <= iteratorMax; i++)
 			{
 				if (gameBoard.board[moveToCheck.x - i][moveToCheck.y + i] == NONE)
 				{
@@ -481,14 +469,14 @@ bool GameState::CheckMove(GameAction moveToCheck)
 
 
 	//check down left
-	if (moveToCheck.x <= BOARD_DIMENSION - 2 && moveToCheck.y > 1)
+	if (moveToCheck.x <= BOARD_DIMENSION - 2 && moveToCheck.y >= 2)
 	{
 		if (gameBoard.board[moveToCheck.x + 1][moveToCheck.y - 1] == oppositeColour)
 		{
 
-			int iter = 1 + std::min(moveToCheck.y, 7 - moveToCheck.x);
+			int iteratorMax = std::min(BOARD_DIMENSION - moveToCheck.x, moveToCheck.y);
 
-			for (int i = 2; i < iter; i++)
+			for (int i = 2; i <= iteratorMax; i++)
 			{
 				if (gameBoard.board[moveToCheck.x + i][moveToCheck.y - i] == NONE)
 				{
@@ -504,14 +492,14 @@ bool GameState::CheckMove(GameAction moveToCheck)
 
 
 	//down right
-	if (moveToCheck.x < BOARD_DIMENSION - 1 && moveToCheck.y < BOARD_DIMENSION - 1)
+	if (moveToCheck.x <= BOARD_DIMENSION - 2 && moveToCheck.y <= BOARD_DIMENSION - 2)
 	{
 		if (gameBoard.board[moveToCheck.x + 1][moveToCheck.y + 1] == oppositeColour)
 		{
 			//use the smaller of the start positions to decide how many times to loop, since that decides how far from and edge you are, if they are the same it doesnt matter
-			int loopMax = 1 + std::min(7 - moveToCheck.x, 7 - moveToCheck.y);
+			int iteratorMax = std::min(BOARD_DIMENSION - moveToCheck.x, BOARD_DIMENSION - moveToCheck.y);
 
-			for (int i = 2; i < loopMax; i++)
+			for (int i = 2; i <= iteratorMax; i++)
 			{
 				if (gameBoard.board[moveToCheck.x + i][moveToCheck.y + i] == NONE)
 				{
