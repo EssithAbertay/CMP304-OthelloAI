@@ -1,7 +1,7 @@
 #pragma once
 
 // define enum's and structs used in the game
-enum BOARD_SQUARE_STATE { NONE, BLUE, RED};
+enum BOARD_SQUARE_STATE { NONE, BLUE, RED, DRAW};
 
 #define BOARD_DIMENSION 7 //the board is actually 8*8 but we use 7 because 0 is used as the starting index
 

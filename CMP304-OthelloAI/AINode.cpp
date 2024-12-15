@@ -109,9 +109,10 @@ void AINode::Simulate(BOARD_SQUARE_STATE startingTurn)
 		//get possible moves
 		std::vector<std::pair<int, int>> possibleMoves = copyOfGameState.getPossibleMoves(playerTurn); 
 		
-		if (possibleMoves.size() == 0)
+	
+		if (possibleMoves.size() == 0 )
 		{
-			//no possible moves, either a draw or just no available moves, need to add logic for the latter, maybe just not return and add a toggle?
+			//no possible moves, either a draw or just no available moves, need to add logic for the latter, maybe just not return and add a toggle? Decided to just leave it, when the ai has no moves itll just consider it a non playing state and look for other paths, potentially this will still be the best and if so its param will show that, something to look at in the future
 			endState = true;
 			CalcResult(BOARD_SQUARE_STATE::NONE);
 			return;
@@ -163,20 +164,28 @@ AINode* AINode::FindHighestRankingChild(bool report)
 	if (branches.size() == 0)
 		return NULL;
 
-	float currHighWR = 0;
-	float nodeWR = 0;
+
 	int highIndex = 0;
 
-	//float maxRanking = 0;
-	//int maxIndex = 0;
+	float nodeExplorationValue;
+	float currHighNodeExplorationValue = 0;
+	float explorationParam = 0.4;
+	float childWins = 0;
+	float childSims = 0;
+	float parentSims = visits;
+
 
 	for (int i = 0; i < branches.size(); i++)
 	{
-		nodeWR = branches[i]->getRanking() / branches[i]->getVisits();
+		//ucb formula
+		childWins = branches[i]->getRanking();
+		childSims = branches[i]->getVisits();
+		nodeExplorationValue = (childWins / childSims) + (explorationParam * sqrt(log(parentSims / childSims)));
 
-		if (nodeWR > currHighWR)
+
+		if (nodeExplorationValue > currHighNodeExplorationValue)
 		{
-			currHighWR = nodeWR;
+			currHighNodeExplorationValue = nodeExplorationValue;
 			highIndex = i;
 		}
 	}
@@ -186,15 +195,15 @@ AINode* AINode::FindHighestRankingChild(bool report)
 
 void AINode::CalcResult(BOARD_SQUARE_STATE winner)
 {
-	if (winner == BOARD_SQUARE_STATE::RED)
+	if (winner == BOARD_SQUARE_STATE::RED) //when you win big reward
 	{
-		Backpropagate(1);
+		Backpropagate(2);
 	}
-	else if (winner == BOARD_SQUARE_STATE::BLUE)
+	else if (winner == BOARD_SQUARE_STATE::BLUE) //when you lose from this it's punishing
 	{
 		Backpropagate(-1);
 	}
-	else
+	else //when no moves are possible it's just 0
 	{
 		Backpropagate(0);
 	}

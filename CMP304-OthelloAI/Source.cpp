@@ -44,6 +44,8 @@ void AITurn()
 
 void main()
 {
+	srand(time(NULL));
+
 	//old method
 	//OthelloBoard gameBoard;
 	//
@@ -82,6 +84,7 @@ void main()
 		rootNode->setActivePlayer(aiMarker); //ai plays first
 		rootNode->setGameState(mainGameState);
 
+
 		// define amount
 		int runCount = 0;
 
@@ -111,7 +114,8 @@ void main()
 		bestAction.playerMove = aiMarker;
 		std::cout << "The AI played " << bestAction.y << " " << bestAction.x << std::endl;
 
-		//update the main state with the ai move
+		//update the main state with the ai move		activePlayer	RED (2)	BOARD_SQUARE_STATE
+
 		mainGameState.setAndApplyAction(bestAction);
 		mainGameState.printBoard();
 
@@ -121,19 +125,23 @@ void main()
 		if (winner == BOARD_SQUARE_STATE::BLUE)
 		{
 			gameOver = true;
-			std::cout << "Player WINS!" << std::endl;
+			std::cout << "PLAYER WINS!" << std::endl;
 			break;
 		}
 		else  if (winner == BOARD_SQUARE_STATE::RED)
 		{
 			gameOver = true;
-			std::cout << "CROSS WINS!" << std::endl;
+			std::cout << "AI WINS!" << std::endl;
+			break;
+		}
+		else  if (winner == BOARD_SQUARE_STATE::DRAW)
+		{
+			gameOver = true;
+			std::cout << "IT'S A DRAW!" << std::endl;
 			break;
 		}
 
-		//need draw logic
-
-		std::cout << "Player Turn" << std::endl;
+		std::cout << "PLAYER TURN" << std::endl;
 
 		bool validMove = true;
 
@@ -143,53 +151,60 @@ void main()
 		int x = -1, y = -1;
 		GameAction playerAction;
 
-		do {
-			if (!validMove)
-			{
-				std::cout << "Enter a valid move!" << std::endl;
-			}
-			validMove = false;
-			x = -1, y = -1;
-			std::cout << "Enter your x position: ";  //x and y are flipped i cant be bothered to fix so we will hide that info
-			std::cin >> y;
 
-			std::cout << "Enter your y position: ";
-			std::cin >> x;
-
-
-			for (int i = 0; i < playerMoves.size();i++)
-			{
-				if (x == playerMoves[i].first && y == playerMoves[i].second)
+		if (playerMoves.size() != 0) //if the player has avaialble moves, if they dont then their turn is skipped, already had a win check so we know that neither player has won yet
+		{
+			do {
+				if (!validMove)
 				{
-					validMove = true;
+					std::cout << "Enter a valid move!" << std::endl;
 				}
+				validMove = false;
+				x = -1, y = -1;
+				std::cout << "Enter your x position: ";  //x and y are flipped i cant be bothered to fix so we will hide that info
+				std::cin >> y;
+
+				std::cout << "Enter your y position: ";
+				std::cin >> x;
+
+
+				for (int i = 0; i < playerMoves.size(); i++)
+				{
+					if (x == playerMoves[i].first && y == playerMoves[i].second)
+					{
+						validMove = true;
+					}
+				}
+			} while (!validMove);
+
+			playerAction.x = x;
+			playerAction.y = y;
+			playerAction.playerMove = playerMarker;
+
+			mainGameState.setAndApplyAction(playerAction);
+			mainGameState.printBoard();
+
+			//check if the player won the game
+			winner = mainGameState.checkWin();
+
+			if (winner == BOARD_SQUARE_STATE::RED)
+			{
+				gameOver = true;
+				std::cout << "AI WINS!" << std::endl;
 			}
-		} while (!validMove);
+			else  if (winner == BOARD_SQUARE_STATE::BLUE)
+			{
+				gameOver = true;
+				std::cout << "PLAYER WINS!" << std::endl;
+			}
 
-		playerAction.x = x;
-		playerAction.y = y;
-		playerAction.playerMove = playerMarker;
-
-		mainGameState.setAndApplyAction(playerAction);
-		mainGameState.printBoard();
-
-		//check if the player won the game
-		winner = mainGameState.checkWin();
-
-		if (winner == BOARD_SQUARE_STATE::RED)
-		{
-			gameOver = true;
-			std::cout << "AI WINS!" << std::endl;
+			// reset the root node ready for next turn
+			rootNode->resetNode();
 		}
-		else  if (winner == BOARD_SQUARE_STATE::BLUE)
+		else
 		{
-			gameOver = true;
-			std::cout << "PLAYER WINS!" << std::endl;
+			std::cout << "PLAYER CANNOT PLAY!" << std::endl << "PLAYER TURN IS SKIPPED!" << std::endl;
 		}
-
-		// reset the root node ready for next turn
-		rootNode->resetNode();
-
 	}while (!gameOver);
  std::cout << "GAME OVER!" << std::endl;
 	return;   
