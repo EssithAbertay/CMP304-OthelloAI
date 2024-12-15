@@ -4,7 +4,7 @@
 #include "BoardAndAction.h"
 #include "AINode.h"
 
-const int MAX_RUNS = 5000;
+const int MAX_RUNS = 15000;
 
 
 
@@ -198,13 +198,15 @@ void main()
 				std::cout << "PLAYER WINS!" << std::endl;
 			}
 
-			// reset the root node ready for next turn
-			rootNode->resetNode();
+			
 		}
 		else
 		{
 			std::cout << "PLAYER CANNOT PLAY!" << std::endl << "PLAYER TURN IS SKIPPED!" << std::endl;
 		}
+		
+		// reset the root node ready for next turn
+		rootNode->resetNode();
 	}while (!gameOver);
  std::cout << "GAME OVER!" << std::endl;
 	return;   
