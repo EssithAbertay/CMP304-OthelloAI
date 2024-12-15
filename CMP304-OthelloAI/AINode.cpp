@@ -169,7 +169,7 @@ AINode* AINode::FindHighestRankingChild(bool report)
 
 	float nodeExplorationValue;
 	float currHighNodeExplorationValue = 0;
-	float explorationParam = 1.1;
+	float explorationParam = 0.4;
 	float childWins = 0;
 	float childSims = 0;
 	float parentSims = visits;
