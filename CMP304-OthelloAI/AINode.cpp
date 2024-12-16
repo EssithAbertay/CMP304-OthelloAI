@@ -114,9 +114,6 @@ void AINode::Simulate(BOARD_SQUARE_STATE startingTurn)
 		//get possible moves
 		std::vector<std::pair<int, int>> possibleMoves = copyOfGameState.getPossibleMoves(playerTurn); 
 		
-
-
-	
 		if (possibleMoves.size() == 0 )
 		{
 			if (copyOfGameState.getPossibleMoves(getOppositeMove(playerTurn)).size() == 0) //if both players have no moves the game ends
@@ -137,9 +134,6 @@ void AINode::Simulate(BOARD_SQUARE_STATE startingTurn)
 			// pick a random move and apply it to the simulation state
 			int randomMove = rand() % possibleMoves.size();
 			GameAction newAction(possibleMoves[randomMove].first, possibleMoves[randomMove].second, playerTurn);
-
-
-
 
 			copyOfGameState.setAndApplyAction(newAction);
 		}
@@ -212,7 +206,7 @@ AINode* AINode::FindHighestRankingChild()
 				set = true;
 
 				GameState tempGameBoard = getGameState();
-				tempGameBoard.setAndApplyAction(branches[highIndex]->worldState.gameAction);
+				tempGameBoard.setAndApplyAction(branches[i]->worldState.gameAction);
 
 				auto tempMoves = tempGameBoard.getPossibleMoves(BLUE);
 				for (int j = 0; j < tempMoves.size(); j++) //moves that make it so the other player can take a corner should be discouraged

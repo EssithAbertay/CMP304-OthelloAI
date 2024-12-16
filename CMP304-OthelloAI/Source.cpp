@@ -71,10 +71,11 @@ void main()
 				}
 			
 			}
+
 			bestAction.playerMove = aiMarker;
 			std::cout << "The AI played " << bestAction.y << " " << bestAction.x << std::endl;
 
-			//update the main state with the ai move		activePlayer	RED (2)	BOARD_SQUARE_STATE
+			//update the main state with the ai move activePlayer	RED (2)	BOARD_SQUARE_STATE
 
 			mainGameState.setAndApplyAction(bestAction);
 
