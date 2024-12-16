@@ -20,6 +20,8 @@ public:
 
 	//tree functions
 	AINode* FindHighestRankingChild();
+
+
 	void CalcResult(BOARD_SQUARE_STATE winner);
 	void resetNode();
 

@@ -588,14 +588,16 @@ BOARD_SQUARE_STATE GameState::checkWin()
 
 	//when more blue or red squares return which
 	if (blueSquares > redSquares)
-	{
+	{	
+		//std::cout << "P";
 		return BLUE;
 	}
 	if (redSquares > blueSquares)
 	{
+		//std::cout << "A";
 		return RED;
 	}
-
+	//std::cout << "D";
 	//if blue and red squares are tied return as such
 	return DRAW;
 }

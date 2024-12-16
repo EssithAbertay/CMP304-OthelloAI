@@ -37,7 +37,7 @@ AINode::~AINode()
 AINode* AINode::Select()
 {
 	// if there are no child nodes, we expand this node
-	if (branches.size() == 0)
+	if (branches.size() == 0 || availableMoves.size() > 0)
 		return this;
 	else
 	{
@@ -90,9 +90,13 @@ AINode* AINode::Expand()
 void AINode::Simulate(BOARD_SQUARE_STATE startingTurn)
 {
 	GameState copyOfGameState = getGameState();
-
 	BOARD_SQUARE_STATE playerTurn = startingTurn;
 
+	if (parent != NULL) //the current player is the player after the parent
+	{
+		playerTurn = getOppositeMove(parent->activePlayer);
+	}
+	
 	bool endState = false;
 
 	//check if this new state is an end of game state
@@ -100,6 +104,7 @@ void AINode::Simulate(BOARD_SQUARE_STATE startingTurn)
 	if (winner != BOARD_SQUARE_STATE::NONE) //this needs changed as i have other states, either that or i need to change the types, probably will do the latter
 	{
 		CalcResult(winner);
+		endState = true;
 		return;
 	}
 
@@ -157,9 +162,9 @@ void AINode::Backpropagate(int result)
 {
 	visits++;
 
-	if (result > 0) {
+	//if (result > 0) {
 		ranking += result;
-	}
+	//}
 
 	// if we're not at the root, update the parent with the result
 	if (this->parent != NULL)
@@ -171,11 +176,13 @@ void AINode::Backpropagate(int result)
 AINode* AINode::FindHighestRankingChild()
 {
 	if (branches.size() == 0)
+	{
 		return NULL;
-
+	}
 
 	int highIndex = 0;
 
+	float currentHigh = 0;
 	float nodeExplorationValue;
 	float currHighNodeExplorationValue = 0;
 	float explorationParam = 1.4;
@@ -185,17 +192,19 @@ AINode* AINode::FindHighestRankingChild()
 
 	for (int i = 0; i < branches.size(); i++)
 	{
-		//ucb formula
-		childWins = branches[i]->getRanking();
-		childSims = branches[i]->getVisits();
-		nodeExplorationValue = (childWins / childSims) + (explorationParam * sqrt(log(parentSims / childSims)));
+		
+			//ucb formula
+			childWins = branches[i]->getRanking();
+			childSims = branches[i]->getVisits();
+			nodeExplorationValue = (childWins / childSims) + (explorationParam * sqrt(log(parentSims / childSims)));
 
 
-		if (nodeExplorationValue > currHighNodeExplorationValue)
-		{
-			currHighNodeExplorationValue = nodeExplorationValue;
-			highIndex = i;
-		}
+			if (nodeExplorationValue > currHighNodeExplorationValue)
+			{
+				currHighNodeExplorationValue = nodeExplorationValue;
+				highIndex = i;
+			}
+	
 	}
 
 	return branches[highIndex];
@@ -205,11 +214,11 @@ void AINode::CalcResult(BOARD_SQUARE_STATE winner)
 {
 	if (winner == BOARD_SQUARE_STATE::RED) //when the ai wins get a reward
 	{
-		Backpropagate(1);
+		Backpropagate(5);
 	}
 	else if (winner == BOARD_SQUARE_STATE::BLUE) //when the player wins
 	{
-		Backpropagate(-1);
+		Backpropagate(0);
 	}
 	else if (winner == BOARD_SQUARE_STATE::DRAW) //when you draw nothing
 	{
@@ -222,11 +231,11 @@ void AINode::CalcResult(BOARD_SQUARE_STATE winner)
 }
 
 void AINode::resetNode()
-{
+{	
+	availableMoves.clear();
 	branches.clear();
 	visits = 0;
 	ranking = 0;
-	availableMoves.clear();
 }
 
 void AINode::setGameState(GameState newState)

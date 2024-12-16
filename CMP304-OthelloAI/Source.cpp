@@ -20,6 +20,8 @@ void main()
 	GameState mainGameState;
 	AINode* rootNode = new AINode();
 
+	mainGameState.printBoard();
+
 	bool gameOver = false;
 
 	do {
@@ -43,49 +45,71 @@ void main()
 			if (!expandedNode == NULL)
 			{
 				//sim and backpropagate
-				expandedNode->Simulate(aiMarker);
+				expandedNode->Simulate(playerMarker); //the value put in here is irrelevant, in the simulate it makes sure that the current player is opposite to the parents player
 			}
 
 			runCount++;
 		} while (runCount < MAX_RUNS); //could use a for loop instead
 
+		BOARD_SQUARE_STATE winner;
 
+		auto availableaimoves = mainGameState.getPossibleMoves(RED);
 
-		//perform the decided action
-		AINode* highestChild = rootNode->FindHighestRankingChild();
-		GameAction bestAction = highestChild->getGameState().gameAction;
-		bestAction.playerMove = aiMarker;
-		std::cout << "The AI played " << bestAction.y << " " << bestAction.x << std::endl;
+		if (availableaimoves.size() != 0) //only play if the ai has a valid move
+		{	
+			//perform the decided action
+			AINode* highestChild = rootNode->FindHighestRankingChild();
 
-		//update the main state with the ai move		activePlayer	RED (2)	BOARD_SQUARE_STATE
+			GameAction bestAction = highestChild->getGameState().gameAction;
 
-		mainGameState.setAndApplyAction(bestAction);
-		mainGameState.printBoard();
+			for (int i = 0; i < availableaimoves.size(); i++) //when a corner can be taken it must be taken, it is always good!
+			{
+				if (availableaimoves[i] == std::make_pair(0, 0) || availableaimoves[i] == std::make_pair(7, 7) || availableaimoves[i] == std::make_pair(0, 7) || availableaimoves[i] == std::make_pair(7, 0)) //if an available move is the corner it will be played
+				{
+					bestAction.x = availableaimoves[i].first;
+					bestAction.y = availableaimoves[i].second;
+				}
+			
+			}
+			bestAction.playerMove = aiMarker;
+			std::cout << "The AI played " << bestAction.y << " " << bestAction.x << std::endl;
 
-		//check if the move finished the game
-		BOARD_SQUARE_STATE winner = mainGameState.checkWin();
+			//update the main state with the ai move		activePlayer	RED (2)	BOARD_SQUARE_STATE
 
-		if (winner == BOARD_SQUARE_STATE::BLUE)
-		{
-			gameOver = true;
-			std::cout << "PLAYER WINS!" << std::endl;
-			break;
+			mainGameState.setAndApplyAction(bestAction);
+			mainGameState.printBoard();
+
+			//check if the move finished the game
+			winner = mainGameState.checkWin();
+
+			if (winner == BOARD_SQUARE_STATE::BLUE)
+			{
+				gameOver = true;
+				std::cout << "PLAYER WINS!" << std::endl;
+				break;
+			}
+			else  if (winner == BOARD_SQUARE_STATE::RED)
+			{
+				gameOver = true;
+				std::cout << "AI WINS!" << std::endl;
+				break;
+			}
+			else  if (winner == BOARD_SQUARE_STATE::DRAW)
+			{
+				gameOver = true;
+				std::cout << "IT'S A DRAW!" << std::endl;
+				break;
+			}
+
+			
 		}
-		else  if (winner == BOARD_SQUARE_STATE::RED)
+		else
 		{
-			gameOver = true;
-			std::cout << "AI WINS!" << std::endl;
-			break;
+			std::cout << "NO POSSIBLE MOVES" << std::endl;
+			std::cout << "AI TURN SKIPPED" << std::endl;
 		}
-		else  if (winner == BOARD_SQUARE_STATE::DRAW)
-		{
-			gameOver = true;
-			std::cout << "IT'S A DRAW!" << std::endl;
-			break;
-		}
-
-		std::cout << "PLAYER TURN" << std::endl;
-
+			std::cout << "PLAYER TURN" << std::endl;
+		
 		bool validMove = true;
 
 
