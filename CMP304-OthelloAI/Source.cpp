@@ -77,6 +77,8 @@ void main()
 			//update the main state with the ai move		activePlayer	RED (2)	BOARD_SQUARE_STATE
 
 			mainGameState.setAndApplyAction(bestAction);
+
+
 			mainGameState.printBoard();
 
 			//check if the move finished the game

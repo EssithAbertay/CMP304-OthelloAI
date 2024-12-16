@@ -114,6 +114,8 @@ void AINode::Simulate(BOARD_SQUARE_STATE startingTurn)
 		//get possible moves
 		std::vector<std::pair<int, int>> possibleMoves = copyOfGameState.getPossibleMoves(playerTurn); 
 		
+
+
 	
 		if (possibleMoves.size() == 0 )
 		{
@@ -135,6 +137,10 @@ void AINode::Simulate(BOARD_SQUARE_STATE startingTurn)
 			// pick a random move and apply it to the simulation state
 			int randomMove = rand() % possibleMoves.size();
 			GameAction newAction(possibleMoves[randomMove].first, possibleMoves[randomMove].second, playerTurn);
+
+
+
+
 			copyOfGameState.setAndApplyAction(newAction);
 		}
 
@@ -190,6 +196,8 @@ AINode* AINode::FindHighestRankingChild()
 	float childSims = 0;
 	float parentSims = visits;
 
+	bool set = false;
+
 	for (int i = 0; i < branches.size(); i++)
 	{
 		
@@ -201,12 +209,32 @@ AINode* AINode::FindHighestRankingChild()
 
 			if (nodeExplorationValue > currHighNodeExplorationValue)
 			{
-				currHighNodeExplorationValue = nodeExplorationValue;
-				highIndex = i;
+				set = true;
+
+				GameState tempGameBoard = getGameState();
+				tempGameBoard.setAndApplyAction(branches[highIndex]->worldState.gameAction);
+
+				auto tempMoves = tempGameBoard.getPossibleMoves(BLUE);
+				for (int j = 0; j < tempMoves.size(); j++) //moves that make it so the other player can take a corner should be discouraged
+				{
+					if (tempMoves[j] == std::make_pair(0, 0) || tempMoves[j] == std::make_pair(7, 7) || tempMoves[j] == std::make_pair(0, 7) || tempMoves[j] == std::make_pair(7, 0))
+					{
+						//discourage in here
+						set = false;
+					}
+
+				}
+
+				if (set)
+				{
+					currHighNodeExplorationValue = nodeExplorationValue;
+					highIndex = i;
+				}
 			}
 	
 	}
 
+	//put this in if
 	return branches[highIndex];
 }
 
