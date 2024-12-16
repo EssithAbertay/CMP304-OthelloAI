@@ -37,13 +37,12 @@ AINode::~AINode()
 AINode* AINode::Select()
 {
 	// if there are no child nodes, we expand this node
-	if (branches.size() == 0 || availableMoves.size() > 0)
+	if (branches.size() == 0)
 		return this;
 	else
 	{
 		// this should be extended later to have an exploration function
-		//	return branches[randomBranch]->Select();
-		return FindHighestRankingChild(true)->Select();
+		return FindHighestRankingChild()->Select();
 	}
 }
 
@@ -106,28 +105,36 @@ void AINode::Simulate(BOARD_SQUARE_STATE startingTurn)
 
 	//repeat till we get to an end state
 	do {
+
 		//get possible moves
 		std::vector<std::pair<int, int>> possibleMoves = copyOfGameState.getPossibleMoves(playerTurn); 
 		
 	
 		if (possibleMoves.size() == 0 )
 		{
-			//no possible moves, either a draw or just no available moves, need to add logic for the latter, maybe just not return and add a toggle? Decided to just leave it, when the ai has no moves itll just consider it a non playing state and look for other paths, potentially this will still be the best and if so its param will show that, something to look at in the future
-			endState = true;
-			CalcResult(BOARD_SQUARE_STATE::NONE);
-			return;
+			if (copyOfGameState.getPossibleMoves(getOppositeMove(playerTurn)).size() == 0) //if both players have no moves the game ends
+			{ 
+				endState = true;
+				CalcResult(copyOfGameState.checkWin()); //check who the winner is
+				return;
+			}
+			else //when the other playre can still play but the current player cannot
+			{
+				// flip marker for next move
+				playerTurn = getOppositeMove(playerTurn);
+				continue;
+			}
 		}
-		else
+		else //if moves available
 		{
 			// pick a random move and apply it to the simulation state
 			int randomMove = rand() % possibleMoves.size();
 			GameAction newAction(possibleMoves[randomMove].first, possibleMoves[randomMove].second, playerTurn);
 			copyOfGameState.setAndApplyAction(newAction);
-			possibleMoves.clear();
 		}
 
-		//check if the last move was a winning one
-		BOARD_SQUARE_STATE winner = copyOfGameState.checkWin();
+		//check the result of the last move
+		winner = copyOfGameState.checkWin();
 
 
 		if (winner != BOARD_SQUARE_STATE::NONE)
@@ -156,10 +163,12 @@ void AINode::Backpropagate(int result)
 
 	// if we're not at the root, update the parent with the result
 	if (this->parent != NULL)
+	{
 		this->parent->Backpropagate(result);
+	}
 }
 
-AINode* AINode::FindHighestRankingChild(bool report)
+AINode* AINode::FindHighestRankingChild()
 {
 	if (branches.size() == 0)
 		return NULL;
@@ -169,11 +178,10 @@ AINode* AINode::FindHighestRankingChild(bool report)
 
 	float nodeExplorationValue;
 	float currHighNodeExplorationValue = 0;
-	float explorationParam = 2;
+	float explorationParam = 1.4;
 	float childWins = 0;
 	float childSims = 0;
 	float parentSims = visits;
-
 
 	for (int i = 0; i < branches.size(); i++)
 	{
@@ -195,15 +203,19 @@ AINode* AINode::FindHighestRankingChild(bool report)
 
 void AINode::CalcResult(BOARD_SQUARE_STATE winner)
 {
-	if (winner == BOARD_SQUARE_STATE::RED) //when you win big reward
+	if (winner == BOARD_SQUARE_STATE::RED) //when the ai wins get a reward
 	{
-		Backpropagate(2);
+		Backpropagate(1);
 	}
-	else if (winner == BOARD_SQUARE_STATE::BLUE) //when you lose from this it's punishing
+	else if (winner == BOARD_SQUARE_STATE::BLUE) //when the player wins
 	{
 		Backpropagate(-1);
 	}
-	else //when no moves are possible it's just 0
+	else if (winner == BOARD_SQUARE_STATE::DRAW) //when you draw nothing
+	{
+		Backpropagate(0);
+	}
+	else // redundancy
 	{
 		Backpropagate(0);
 	}

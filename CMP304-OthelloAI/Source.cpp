@@ -1,12 +1,9 @@
 #include <iostream>
-//#include "OthelloBoard.h"
 
 #include "BoardAndAction.h"
 #include "AINode.h"
 
 const int MAX_RUNS = 5000;
-
-
 
 void AITurn()
 {}
@@ -46,7 +43,7 @@ void main()
 			if (!expandedNode == NULL)
 			{
 				//sim and backpropagate
-				expandedNode->Simulate(playerMarker);
+				expandedNode->Simulate(aiMarker);
 			}
 
 			runCount++;
@@ -55,7 +52,7 @@ void main()
 
 
 		//perform the decided action
-		AINode* highestChild = rootNode->FindHighestRankingChild(true);
+		AINode* highestChild = rootNode->FindHighestRankingChild();
 		GameAction bestAction = highestChild->getGameState().gameAction;
 		bestAction.playerMove = aiMarker;
 		std::cout << "The AI played " << bestAction.y << " " << bestAction.x << std::endl;

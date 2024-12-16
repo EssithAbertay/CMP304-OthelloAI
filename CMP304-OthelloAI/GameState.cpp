@@ -599,3 +599,4 @@ BOARD_SQUARE_STATE GameState::checkWin()
 	//if blue and red squares are tied return as such
 	return DRAW;
 }
+

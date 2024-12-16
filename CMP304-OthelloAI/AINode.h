@@ -19,7 +19,7 @@ public:
 	void Backpropagate(int reward);
 
 	//tree functions
-	AINode* FindHighestRankingChild(bool report);
+	AINode* FindHighestRankingChild();
 	void CalcResult(BOARD_SQUARE_STATE winner);
 	void resetNode();
 
