@@ -19,8 +19,8 @@ public:
 	void Backpropagate(int reward);
 
 	//tree functions
-	AINode* FindHighestRankingChild();
-
+	AINode* findChildUCB(); //used to search/expand the tree
+	AINode* findHighestRankingChild(); //used to find the path most explored/best path
 
 	void CalcResult(BOARD_SQUARE_STATE winner);
 	void resetNode();
@@ -54,5 +54,11 @@ private:
 	int ranking;
 	int visits;
 	bool isEndState;
+
+	std::pair<int, int> veryBadPositions[4] = { {1,1},{1,6},{6,1},{6,6} };//very bad moves are the squares diagonally inwards from the corners as they tend to make it very easy to take the corner
+
+	std::pair<int, int> badPositions[8] = { {0,1},{1,0},{6,0},{7,1},{7,6},{6,7},{0,6},{1,7} }; //bad moves are squares directly adjacent to corners, not as bad as the very bad moves but still bad
+
+
 };
 

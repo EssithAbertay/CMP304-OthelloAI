@@ -602,3 +602,46 @@ BOARD_SQUARE_STATE GameState::checkWin()
 	return DRAW;
 }
 
+BOARD_SQUARE_STATE GameState::findMore()
+{
+	int blueSquares = 0;
+	int redSquares = 0;
+
+	bool gameFinished = true;
+
+	for (int i = 0; i < BOARD_DIMENSION + 1; i++)
+	{
+		for (int j = 0; j < BOARD_DIMENSION + 1; j++)
+		{
+
+			switch (gameBoard.board[i][j])
+			{
+			case (BLUE):
+				blueSquares++;
+				break;
+			case (RED):
+				redSquares++;
+				break;
+			default:
+				break;
+			}
+
+
+		}
+	}
+
+	//when more blue or red squares return which
+	if (blueSquares > redSquares)
+	{
+		//std::cout << "P";
+		return BLUE;
+	}
+	if (redSquares > blueSquares)
+	{
+		//std::cout << "A";
+		return RED;
+	}
+
+	return DRAW;
+}
+

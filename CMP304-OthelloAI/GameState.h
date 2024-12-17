@@ -27,5 +27,7 @@ public:
 
 	void printBoard();
 	BOARD_SQUARE_STATE checkWin();
+	BOARD_SQUARE_STATE findMore();
+
 };
 
