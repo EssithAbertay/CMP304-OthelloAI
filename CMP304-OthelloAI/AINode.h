@@ -13,9 +13,10 @@ public:
 
 
 	AINode* Select();
-	AINode* Expand();
+	AINode* Expand(int veryBadMovesExclusion);
 
-	void Simulate(BOARD_SQUARE_STATE startingTurn);
+	void Simulate(BOARD_SQUARE_STATE startingTurn, int veryBadMovesExclusion);
+	void SimulateXTurns(BOARD_SQUARE_STATE startingTurn, int veryBadMovesExclusion, int turnsToPlayInSim);
 	void Backpropagate(int reward);
 
 	//tree functions

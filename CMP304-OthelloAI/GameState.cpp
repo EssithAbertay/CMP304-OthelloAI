@@ -18,7 +18,6 @@ void GameState::FlipPieces()
 	BOARD_SQUARE_STATE playedColour = gameAction.playerMove;
 	BOARD_SQUARE_STATE oppositeColour = (playedColour == BLUE) ? RED : BLUE;	//set the opposite colour as the opposite aas to what was played
 
-
 	bool flip = false;
 	int a = 0;
 
